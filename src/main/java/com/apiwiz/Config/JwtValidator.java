@@ -31,12 +31,12 @@ public class JwtValidator extends OncePerRequestFilter {
 
             // Extract email from JWT token
             try {
-                System.out.println("mee  is");
+               // System.out.println("code yeha tak work kar rha hai");
                 String email = JwtProvider.getEmailFromJwtToken(jwt);
-                System.out.println("mee  toooooo");
+               // System.out.println("ye v abb work kar rha hai");
                 List<GrantedAuthority>authorities = new ArrayList<>();
 
-                System.out.println("this is");
+               // System.out.println("ye print nahi ho rha error hai authorities ");
 
                 Authentication authentication = new UsernamePasswordAuthenticationToken(email, null, authorities);
                 SecurityContextHolder.getContext().setAuthentication(authentication);

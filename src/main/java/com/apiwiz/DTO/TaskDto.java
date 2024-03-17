@@ -19,7 +19,7 @@ public class TaskDto {
     private String title;
     private String description;
     private String dueDate;
-    private String status; // Pending, In Progress, Completed
+    private String status;
     private String email;
     private String password;
 

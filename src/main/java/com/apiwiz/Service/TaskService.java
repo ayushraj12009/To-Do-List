@@ -1,5 +1,8 @@
 package com.apiwiz.Service;
 
+//import com.apiwiz.CustomException.TaskNotFoundException;
+//import com.apiwiz.CustomException.UnauthorizedTaskAccessException;
+//import com.apiwiz.CustomException.UserNotFoundException;
 import com.apiwiz.Model.Task;
 import com.apiwiz.Model.User;
 import com.apiwiz.Repository.TaskRepository;
@@ -28,61 +31,115 @@ public class TaskService {
         return user.getTaskletDetails();
     }
 
-//    public Task findById(Long id){
-//        return taskRepository.findById(id).get();
-//    }
-//
-//
-//    public Task findByIdOnlyAuthenticateUser(String email, Long id) throws Exception{
-//        User user = userRepository.findByEmail(email);
-//        Optional<Task> optionalTask = taskRepository.findById(id);
-//
-//        if (optionalTask.isEmpty()){
-//            throw new Exception("TaskList is not available with this ID");
-//        }
-//
-//        if (!user.getTaskletDetails().contains(optionalTask.get())){
-//            throw  new Exception("This TaskList Item is not match with the user");
-//        }
-//
-//        return optionalTask.get();
-//
-//    }
-//
-//
-//    public String deleteByIdOnlyAuthenticateUser(String email, Long id) throws Exception {
+
+
+    public Task findById(Long id){
+        return taskRepository.findById(id).get();
+    }
+
+
+    public Task findByIdOnlyAuthenticateUser(String email, Long id) throws Exception{
+        User user = userRepository.findByEmail(email);
+        Optional<Task> optionalTask = taskRepository.findById(id);
+
+        if (optionalTask.isEmpty()){
+            throw new Exception("TaskList is not available with this ID");
+        }
+
+        if (!user.getTaskletDetails().contains(optionalTask.get())){
+            throw  new Exception("This TaskList Item is not match with the user");
+        }
+
+        return optionalTask.get();
+    }
+
+
+    public void updateTaskStatus(Long taskId, String newStatus) throws Exception {
+
+        Optional<Task> optionalTask = taskRepository.findById(taskId);
+
+        if (optionalTask.isEmpty()) {
+            throw new Exception("Task not found with ID: " + taskId);
+        }
+
+        Task task = optionalTask.get();
+
+
+        task.setStatus(newStatus);
+
+
+        taskRepository.save(task);
+    }
+
+
+
+
+
+
+
+
+//    public String deleteTaskByIdOnlyAuthenticateUser(String email, Long taskId) throws TaskNotFoundException, UserNotFoundException, UnauthorizedTaskAccessException {
 //        // Find the user by email
 //        User user = userRepository.findByEmail(email);
 //        if (user == null) {
-//            throw new Exception("User not found");
+//            throw new UserNotFoundException("User not found");
 //        }
 //
-//        // Find the wishlist item by id
-//        Optional<Task> OptionalTask = taskRepository.findById(id);
-//        if (OptionalTask.isEmpty()) {
-//            throw new Exception("Task item not found");
+//        // Find the task by id
+//        Optional<Task> optionalTask = taskRepository.findById(taskId);
+//        if (optionalTask.isEmpty()) {
+//            throw new TaskNotFoundException("Task not found");
 //        }
-//        Task task = OptionalTask.get();
+//        Task task = optionalTask.get();
 //
-//        // Check if the task item belongs to the user
+//        // Check if the task belongs to the user
 //        if (!task.getUser().equals(user)) {
-//            throw new Exception("Wishlist item does not belong to the user");
+//            throw new UnauthorizedTaskAccessException("Task does not belong to the user");
 //        }
 //
-//        List<Task> taskList = user.getTaskletDetails();
-//        taskList.remove(task);
-//        user.setTaskletDetails(taskList);
+//        // Delete the task from the user's task list
+//        List<Task> userTaskList = user.getTaskletDetails();
+//        userTaskList.remove(task);
 //        userRepository.save(user);
 //
+//        // Delete the task from the database
+//        taskRepository.deleteById(taskId);
 //
-//        // Delete the wishlist item from the database
-//        userRepository.deleteById(id);
-//
-//        // I have to work on it
-//        return "Wishlist item deleted successfully";
+//        return "Task deleted successfully";
 //    }
-//
-//
+
+
+    public String deleteByIdOnlyAuthenticateUser(String email, Long id) throws Exception {
+
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new Exception("User not found");
+        }
+
+
+        Optional<Task> optionalWishlist = taskRepository.findById(id);
+        if (optionalWishlist.isEmpty()) {
+            throw new Exception("Task  not found");
+        }
+        Task taskList = optionalWishlist.get();
+
+
+        if (!taskList.getUser().equals(user)) {
+            throw new Exception("Wishlist item does not belong to the user");
+        }
+
+
+        List<Task> userWishlists = user.getTaskletDetails();
+        userWishlists.remove(taskList);
+        user.setTaskletDetails(userWishlists);
+        userRepository.save(user);
+
+
+        taskRepository.deleteById(id);
+
+
+        return "Wishlist item deleted successfully";
+    }
 
 
 
