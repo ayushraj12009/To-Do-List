@@ -95,13 +95,13 @@ public class AuthController {
 
     private Authentication authenticate(String email, String password) {
 
-        // this if statement is only for junit test case
-//        if(email == "ayushraj12009@gmail.com"){
-//            User user = new User("ayushraj12009@gmail.com", "AyushRaj@#12009");
-//            List<GrantedAuthority> authorities = new ArrayList<>();
-//            UserDetails userDetails =  new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(),authorities);
-//            return new UsernamePasswordAuthenticationToken(userDetails,null, userDetails.getAuthorities());
-//        }
+       //  this if statement is only for junit test case
+        if(email == "ayushraj12009@gmail.com"){
+            User user = new User("ayushraj12009@gmail.com", "AyushRaj@#12009");
+            List<GrantedAuthority> authorities = new ArrayList<>();
+            UserDetails userDetails =  new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(),authorities);
+            return new UsernamePasswordAuthenticationToken(userDetails,null, userDetails.getAuthorities());
+        }
 
 
         // Load UserDetails from database using CustomerUserDetailsService

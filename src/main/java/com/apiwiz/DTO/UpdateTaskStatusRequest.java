@@ -12,14 +12,17 @@ public class UpdateTaskStatusRequest {
     private Long taskId;
     private String newStatus;
 
+  private String taskUpdate;
+
     public UpdateTaskStatusRequest() {
     }
 
-    public UpdateTaskStatusRequest(String email, String password, Long taskId, String newStatus) {
+    public UpdateTaskStatusRequest(String email, String password, Long taskId, String newStatus, String taskUpdate) {
         this.email = email;
         this.password = password;
         this.taskId = taskId;
         this.newStatus = newStatus;
+      this.taskUpdate = taskUpdate;
     }
 
 

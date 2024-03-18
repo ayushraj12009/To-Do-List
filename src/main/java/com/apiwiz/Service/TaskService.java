@@ -8,6 +8,9 @@ import com.apiwiz.Model.User;
 import com.apiwiz.Repository.TaskRepository;
 import com.apiwiz.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +36,8 @@ public class TaskService {
 
 
 
+
+
     public Task findById(Long id){
         return taskRepository.findById(id).get();
     }
@@ -54,7 +59,7 @@ public class TaskService {
     }
 
 
-    public void updateTaskStatus(Long taskId, String newStatus) throws Exception {
+    public void updateTaskStatus(Long taskId, String newStatus, String taskUpdate) throws Exception {
 
         Optional<Task> optionalTask = taskRepository.findById(taskId);
 
@@ -66,48 +71,11 @@ public class TaskService {
 
 
         task.setStatus(newStatus);
+        task.setDescription(taskUpdate);
 
 
         taskRepository.save(task);
     }
-
-
-
-
-
-
-
-
-//    public String deleteTaskByIdOnlyAuthenticateUser(String email, Long taskId) throws TaskNotFoundException, UserNotFoundException, UnauthorizedTaskAccessException {
-//        // Find the user by email
-//        User user = userRepository.findByEmail(email);
-//        if (user == null) {
-//            throw new UserNotFoundException("User not found");
-//        }
-//
-//        // Find the task by id
-//        Optional<Task> optionalTask = taskRepository.findById(taskId);
-//        if (optionalTask.isEmpty()) {
-//            throw new TaskNotFoundException("Task not found");
-//        }
-//        Task task = optionalTask.get();
-//
-//        // Check if the task belongs to the user
-//        if (!task.getUser().equals(user)) {
-//            throw new UnauthorizedTaskAccessException("Task does not belong to the user");
-//        }
-//
-//        // Delete the task from the user's task list
-//        List<Task> userTaskList = user.getTaskletDetails();
-//        userTaskList.remove(task);
-//        userRepository.save(user);
-//
-//        // Delete the task from the database
-//        taskRepository.deleteById(taskId);
-//
-//        return "Task deleted successfully";
-//    }
-
 
     public String deleteByIdOnlyAuthenticateUser(String email, Long id) throws Exception {
 
@@ -125,7 +93,7 @@ public class TaskService {
 
 
         if (!taskList.getUser().equals(user)) {
-            throw new Exception("Wishlist item does not belong to the user");
+            throw new Exception("Task does not belong to the user");
         }
 
 
@@ -138,8 +106,24 @@ public class TaskService {
         taskRepository.deleteById(id);
 
 
-        return "Wishlist item deleted successfully";
+        return "Task deleted successfully";
     }
+
+
+    public Page<Task> getAllCustomers(Pageable pageable) {
+        return taskRepository.findAll(pageable);
+    }
+
+    public List<Task> filterTasksByStatus(String status, Sort sort) {
+        return taskRepository.findByStatus(status, sort);
+    }
+
+
+
+
+
+
+
 
 
 

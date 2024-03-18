@@ -1,14 +1,19 @@
 package com.apiwiz.Controller;
 
 
+import com.apiwiz.DTO.FilterByStatus;
 import com.apiwiz.DTO.GetAllUserTask;
 import com.apiwiz.DTO.TaskDto;
 import com.apiwiz.DTO.UpdateTaskStatusRequest;
 import com.apiwiz.Model.Task;
 import com.apiwiz.Model.User;
+import com.apiwiz.Repository.TaskRepository;
 import com.apiwiz.Repository.UserRepository;
 import com.apiwiz.Service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,7 +29,6 @@ import java.util.List;
 
 public class TaskController {
 
-
     @Autowired
     private UserRepository userRepository;
 
@@ -34,6 +38,8 @@ public class TaskController {
     @Autowired
     private TaskService taskService;
 
+    @Autowired
+    private TaskRepository taskRepository;
 
 
     @PostMapping("/createTask")
@@ -121,6 +127,7 @@ public class TaskController {
     }
 
 
+
     @PostMapping("/updateStatus")
     public ResponseEntity<?> updateTaskStatus(@RequestBody UpdateTaskStatusRequest request) {
         try {
@@ -133,7 +140,7 @@ public class TaskController {
             }
 
 
-            taskService.updateTaskStatus(request.getTaskId(), request.getNewStatus());
+            taskService.updateTaskStatus(request.getTaskId(), request.getNewStatus(), request.getTaskUpdate());
 
             return ResponseEntity.ok("Task status updated successfully");
         } catch (Exception e) {
@@ -141,6 +148,49 @@ public class TaskController {
         }
     }
 
+
+
+    @GetMapping("/getTaskList")
+    public ResponseEntity<Page<Task>> getList(@RequestParam(defaultValue = "0") int page,
+                                              @RequestParam(defaultValue = "10") int size) throws Exception {
+        try {
+            Page<Task> customerPage = taskRepository.findAll(PageRequest.of(page, size));
+            return ResponseEntity.ok(customerPage);
+        } catch (Exception e) {
+            throw new Exception("Internal Server Issue");
+        }
+    }
+
+
+
+    @GetMapping("/filterByStatus")
+    public ResponseEntity<List<Task>> filterTasksByStatus(@RequestParam("status") String status,
+                                                          @RequestParam(name = "sortBy", defaultValue = "dueDate") String sortBy,
+                                                          @RequestParam(name = "sortOrder", defaultValue = "asc") String sortOrder) {
+        try {
+            // Validate status parameter
+            if (!isValidStatus(status)) {
+                return ResponseEntity.badRequest().body(null);
+            }
+
+            // Sort the tasks based on the sortBy and sortOrder parameters
+            Sort.Direction direction = sortOrder.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+
+            // Get the filtered tasks
+            List<Task> filteredTasks = taskService.filterTasksByStatus(status, Sort.by(direction, sortBy));
+
+            return ResponseEntity.ok(filteredTasks);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+    // Helper method to validate status parameter
+    private boolean isValidStatus(String status) {
+        return status.equalsIgnoreCase("Pending") ||
+                status.equalsIgnoreCase("In Progress") ||
+                status.equalsIgnoreCase("Completed");
+    }
 
 
 
@@ -168,7 +218,6 @@ public class TaskController {
             return stringResponseEntity;
         }
     }
-
 
 
 
