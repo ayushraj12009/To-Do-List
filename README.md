@@ -93,12 +93,12 @@ Project: Task Management API
            "taskUpdate":"kam ho gya hai"
           }
 
-### Note: For Admin To access all the taks
+### Note: For Admin To access all the tasks
   - Path:`http://localhost:8080/admin/getAllUserTask`
 
 ### Additional Features
 
-9. **Paginationr**
+9. **Pagination**
    - Path: `http://localhost:8080/api/getTaskList?page=0&size=10`
    - Method: GET
    - Description: Just copy this url and past in postman
