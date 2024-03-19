@@ -15,12 +15,11 @@ public class AdminController {
     TaskRepository taskRepository;
 
 
+    // created one API to get all the task as per the assignment requirements
     @GetMapping("/getAllUserTask")
     public List<Task> getAllTask(){
         return taskRepository.findAll();
     }
-
-
 
 
 }

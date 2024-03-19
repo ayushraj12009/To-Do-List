@@ -1,8 +1,5 @@
 package com.apiwiz.Service;
 
-//import com.apiwiz.CustomException.TaskNotFoundException;
-//import com.apiwiz.CustomException.UnauthorizedTaskAccessException;
-//import com.apiwiz.CustomException.UserNotFoundException;
 import com.apiwiz.Model.Task;
 import com.apiwiz.Model.User;
 import com.apiwiz.Repository.TaskRepository;
@@ -33,8 +30,6 @@ public class TaskService {
         User user = userRepository.findByEmail(email);
         return user.getTaskletDetails();
     }
-
-
 
 
 
@@ -85,11 +80,11 @@ public class TaskService {
         }
 
 
-        Optional<Task> optionalWishlist = taskRepository.findById(id);
-        if (optionalWishlist.isEmpty()) {
+        Optional<Task> optionalTaskList = taskRepository.findById(id);
+        if (optionalTaskList.isEmpty()) {
             throw new Exception("Task  not found");
         }
-        Task taskList = optionalWishlist.get();
+        Task taskList = optionalTaskList.get();
 
 
         if (!taskList.getUser().equals(user)) {
@@ -97,9 +92,9 @@ public class TaskService {
         }
 
 
-        List<Task> userWishlists = user.getTaskletDetails();
-        userWishlists.remove(taskList);
-        user.setTaskletDetails(userWishlists);
+        List<Task> userTaskList = user.getTaskletDetails();
+        userTaskList.remove(taskList);
+        user.setTaskletDetails(userTaskList);
         userRepository.save(user);
 
 

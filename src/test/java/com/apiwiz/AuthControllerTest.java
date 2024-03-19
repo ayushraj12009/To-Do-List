@@ -34,7 +34,7 @@ public class AuthControllerTest {
 
     @BeforeEach
     public void setUp() {
-        // Initialize Mockito annotations
+
         MockitoAnnotations.initMocks(this);
     }
 

@@ -31,22 +31,24 @@ public class User {
     private String password;
 
 
+    // connecting table in DB
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Task> taskletDetails = new ArrayList<>();
 
-
+    // constructor
     public User(String email, String password) {
         this.email = email;
         this.password = password;
 
     }
 
-    public User(String firstName, String last, String userName, String eamil, String password) {
+    // constructor
+    public User(String firstName, String last, String userName, String email, String password) {
         this.fristName = firstName;
         this.lastName = last;
         this.userName = userName;
-        this.email = eamil;
+        this.email = email;
         this.password = password;
     }
 

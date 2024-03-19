@@ -18,6 +18,8 @@ public class CustomerUserDetailsService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
+
+    // this is used to check user email is present in DB based on their email id
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 

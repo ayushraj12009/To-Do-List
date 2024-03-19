@@ -41,6 +41,9 @@ public class TaskControllerTest {
     @InjectMocks
     private TaskController taskController;
 
+
+
+
     @Test
     public void createTaskByUser_ValidRequest_ShouldReturnCreated() {
         // Arrange
@@ -78,7 +81,7 @@ public class TaskControllerTest {
 
 
     @Test
-    public void getAllWishListByUser_ValidRequest_ShouldReturnTasks() {
+    public void getAllTaskListByUser_ValidRequest_ShouldReturnTasks() {
         // Arrange
         GetAllUserTask getAllUserTask = new GetAllUserTask("test@example.com", "password");
 
@@ -90,7 +93,7 @@ public class TaskControllerTest {
         when(taskService.findAllTaskByUser(anyString())).thenReturn(mockTasks);
 
         // Act
-        List<Task> result = taskController.getAllWishListByUser(getAllUserTask);
+        List<Task> result = taskController.getUserTask(getAllUserTask);
 
         // Assert
         assertEquals(mockTasks, result);
@@ -98,7 +101,7 @@ public class TaskControllerTest {
 
 
     @Test
-    public void getAllWishListByUser_InvalidRequest_ShouldReturnBadRequest() {
+    public void getAllTaskListByUser_InvalidRequest_ShouldReturnBadRequest() {
         // Arrange
         GetAllUserTask getAllUserTask = new GetAllUserTask("test@example.com", "password");
 
@@ -107,7 +110,7 @@ public class TaskControllerTest {
         when(authController.signin(any(LogginRequest.class))).thenReturn(mockAuthResponse);
 
         // Act
-        List<Task> result = taskController.getAllWishListByUser(getAllUserTask);
+        List<Task> result = taskController.getUserTask(getAllUserTask);
 
         // Assert
         // Expecting the result to be an empty list due to failed authentication
@@ -130,21 +133,6 @@ public class TaskControllerTest {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(mockTask, responseEntity.getBody());
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }

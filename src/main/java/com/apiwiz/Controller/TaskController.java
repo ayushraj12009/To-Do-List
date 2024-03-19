@@ -1,7 +1,6 @@
 package com.apiwiz.Controller;
 
 
-import com.apiwiz.DTO.FilterByStatus;
 import com.apiwiz.DTO.GetAllUserTask;
 import com.apiwiz.DTO.TaskDto;
 import com.apiwiz.DTO.UpdateTaskStatusRequest;
@@ -42,14 +41,15 @@ public class TaskController {
     private TaskRepository taskRepository;
 
 
+    // This api is used to create a task
     @PostMapping("/createTask")
     public ResponseEntity createTaskByUser(@RequestBody TaskDto taskDto){
         try {
-
+            // checking user is valid or not
             LogginRequest logginRequest = new LogginRequest(taskDto.getEmail(), taskDto.getPassword());
             AuthResponse authResponse = authController.signin(logginRequest);
 
-
+            // if user is invalid then this will execute
             if(authResponse.getToken() == null || authResponse.getToken().isEmpty()){
                 throw new UsernameNotFoundException("User Not Found");
             }
@@ -57,6 +57,7 @@ public class TaskController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
+        // If the user is valid, the task will be created as per the user's requirements and saved to the db
         User user = userRepository.findByEmail(taskDto.getEmail());
 
         Task taskItemCreated = new Task(
@@ -73,14 +74,16 @@ public class TaskController {
     }
 
 
+    // This api is used to get all the task of user
     @GetMapping("/getAllUserTask")
-    public List<Task> getAllWishListByUser(@RequestBody GetAllUserTask getAllUserTask) {
+    public List<Task> getUserTask(@RequestBody GetAllUserTask getAllUserTask) {
 
         try {
-
+            // checking user is valid or not
             LogginRequest logginRequest = new LogginRequest(getAllUserTask.getEmail(), getAllUserTask.getPassword());
             AuthResponse authResponse = authController.signin(logginRequest);
 
+            // if user is invalid then this will execute
             if (authResponse.getToken() == null || authResponse.getToken().isEmpty()) {
                 throw new UsernameNotFoundException("User Not Found");
             }
@@ -89,25 +92,28 @@ public class TaskController {
             return (List<Task>) stringResponseEntity;
         }
 
+        // if user is valid then task will return
         return taskService.findAllTaskByUser(getAllUserTask.getEmail());
     }
 
 
+    // this api is used to find a single task based on ID
     @GetMapping("/findTaskByID/{id}")
     public ResponseEntity findTaksByID(@PathVariable Long id){
         return ResponseEntity.ok(taskService.findById(id));
     }
 
 
-
-
+    // this api is used to find authenticated user task
     @GetMapping("/findTaskAuthenticateUserById/{id}")
     public ResponseEntity findlist(@RequestBody GetAllUserTask userInfo, @PathVariable Long id) throws Exception {
         try {
 
+            // checking user is valid or not
             LogginRequest logginRequest = new LogginRequest(userInfo.getEmail(), userInfo.getPassword());
             AuthResponse authResponse = authController.signin(logginRequest);
 
+            // if user is invalid then this will execute
             if (authResponse.getToken() == null || authResponse.getToken().isEmpty()) {
                 throw new UsernameNotFoundException("User Not Found");
             }
@@ -117,6 +123,7 @@ public class TaskController {
         }
         try {
 
+            // if valid then this will return
             return ResponseEntity.ok(taskService.findByIdOnlyAuthenticateUser(userInfo.getEmail(), id));
 
         }catch (Exception e){
@@ -127,19 +134,21 @@ public class TaskController {
     }
 
 
-
+    // this api is used to update the task ur status means you completed or not or is ongoing etc...
     @PostMapping("/updateStatus")
     public ResponseEntity<?> updateTaskStatus(@RequestBody UpdateTaskStatusRequest request) {
         try {
 
+            // checking user is valid or not
             LogginRequest loginRequest = new LogginRequest(request.getEmail(), request.getPassword());
             AuthResponse authResponse = authController.signin(loginRequest);
 
+            // if user is invalid then this will execute
             if (authResponse.getToken() == null || authResponse.getToken().isEmpty()) {
                 throw new UsernameNotFoundException("User Not Found");
             }
 
-
+            // if user is valid then task ur status will update
             taskService.updateTaskStatus(request.getTaskId(), request.getNewStatus(), request.getTaskUpdate());
 
             return ResponseEntity.ok("Task status updated successfully");
@@ -150,6 +159,7 @@ public class TaskController {
 
 
 
+    // this is additional features this api is used to for pagination
     @GetMapping("/getTaskList")
     public ResponseEntity<Page<Task>> getList(@RequestParam(defaultValue = "0") int page,
                                               @RequestParam(defaultValue = "10") int size) throws Exception {
@@ -162,7 +172,7 @@ public class TaskController {
     }
 
 
-
+    // this is additional features this api is used to sorting and filtering the data based on your conditions
     @GetMapping("/filterByStatus")
     public ResponseEntity<List<Task>> filterTasksByStatus(@RequestParam("status") String status,
                                                           @RequestParam(name = "sortBy", defaultValue = "dueDate") String sortBy,
@@ -173,10 +183,10 @@ public class TaskController {
                 return ResponseEntity.badRequest().body(null);
             }
 
-            // Sort the tasks based on the sortBy and sortOrder parameters
+            // Sorting the tasks based on the sortBy and sortOrder parameters
             Sort.Direction direction = sortOrder.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
 
-            // Get the filtered tasks
+            // filtered tasks
             List<Task> filteredTasks = taskService.filterTasksByStatus(status, Sort.by(direction, sortBy));
 
             return ResponseEntity.ok(filteredTasks);
@@ -185,7 +195,7 @@ public class TaskController {
         }
     }
 
-    // Helper method to validate status parameter
+    // method to validate status parameter
     private boolean isValidStatus(String status) {
         return status.equalsIgnoreCase("Pending") ||
                 status.equalsIgnoreCase("In Progress") ||
@@ -193,14 +203,16 @@ public class TaskController {
     }
 
 
-
+        // this api is used to delete the task
     @DeleteMapping("/deleteTaskAuthenticateUserById/{id}")
     public ResponseEntity deletelistByID(@RequestBody GetAllUserTask userInfo, @PathVariable Long id) throws Exception {
         try {
 
+            // checking user is valid or not
             LogginRequest logginRequest = new LogginRequest(userInfo.getEmail(), userInfo.getPassword());
             AuthResponse authResponse = authController.signin(logginRequest);
 
+            // if user is invalid then this will execute
             if (authResponse.getToken() == null || authResponse.getToken().isEmpty()) {
                 throw new UsernameNotFoundException("User Not Found");
             }
@@ -210,6 +222,7 @@ public class TaskController {
         }
         try {
 
+            // if user is valid then task will deleted
             return ResponseEntity.ok(taskService.deleteByIdOnlyAuthenticateUser(userInfo.getEmail(), id));
 
         }catch (Exception e){

@@ -20,15 +20,16 @@ public class Task {
     private String title;
     private String description;
     private String dueDate;
-    private String status; // Pending, In Progress, Completed
+    private String status;
 
-
+    // connecting table in DB
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
 
+    // constructor
     public Task(String title, String description, String status, String dueDate) {
         this.title = title;
         this.description = description;
