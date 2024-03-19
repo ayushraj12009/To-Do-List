@@ -21,11 +21,11 @@ Project: Task Management API
    - Path: `http://localhost:8080/auth/signup`
    - Method: POST
    - Body {
-    "fristName": "-----------",
-    "lastName": "-----------",
-    "userName": -----------,
-    "email": "-----------", 
-    "password": "-----------" 
+    "fristName": "API",
+    "lastName": "wiz",
+    "userName": "APIwiz2024",
+    "email": "task@gmail.com", 
+    "password": "Task@#2024" 
 }
 
 
@@ -33,8 +33,8 @@ Project: Task Management API
    - Path: `http://localhost:8080/auth/signin`
    - Method: POST
    - Body {            
-            "email":"-----------",
-            "password":"-----------"
+            "email":"task@gmail.com",
+            "password":"Task@#2024"
           }
 
 3. **Create Task**
